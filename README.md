@@ -1,116 +1,91 @@
-# AI-Powered Customer Complaint Management System
+# AI-Powered Customer Complaint Management System (Full Python Edition)
 
-An AI-powered Quality Management System (QMS) module tailored for the pharmaceutical manufacturing industry (Active Pharmaceutical Ingredients [API] and Finished Dosage Forms [FDF]). 
+An AI-powered Quality Management System (QMS) module tailored for the pharmaceutical manufacturing industry (Active Pharmaceutical Ingredients [API] and Finished Dosage Forms [FDF]).
 
-This application leverages a **React/Redux** frontend and a **FastAPI/LangGraph** backend powered by **Groq** LLMs to ingest customer complaints (via PDF, DOCX, TXT, or Email), automatically extract structured GMP tracing data, refine fields using an interactive AI Chat Copilot, run compliance assessments, and record full audit trails in the database registry.
+This application has been converted into a **100% Full-Stack Python application** using **Streamlit, SQLAlchemy, and Groq LLMs (with smart heuristic fallback)**. It eliminates all Node.js, npm, and Vite dependencies, running seamlessly from a single Python command.
 
 ---
 
 ## 🌟 Key Features
 
-1. **System Locked Form (No Manual Entry)**:
-   - To strictly comply with the challenge rules, all input elements on the Left Form are set to `readOnly` and selects to `disabled`.
-   - A yellow **System Lock Alert Banner** notifies the operator: *“System Lock: Manual entry is disabled. Use the AI Assistant on the right to populate and edit fields.”*
-   - Field values can only be populated or modified via the AI Document Ingestion or the Chat Copilot.
-2. **AI Document Extraction**:
-   - Upload complaint files (`.pdf`, `.docx`, `.txt`, `.eml`) or paste raw complaint text.
-   - A LangGraph extraction pipeline processes the text and instantly populates the form fields.
+1. **System-Locked Complaint Form (No Manual Entry)**:
+   - Complies with strict data-integrity rules: all form fields are locked in read-only mode.
+   - An alert banner reminds operators that fields can only be populated or modified via AI Ingestion or the Chat Copilot.
+2. **AI Document Ingestion**:
+   - Supports uploading `.pdf`, `.docx`, `.txt`, and `.eml` files or pasting raw complaint text.
+   - The AI agent extracts GMP tracing parameters (Customer, Product, Batch, Dates, Quantities, Defect Type, Initial Severity, Priority, Next Action, Risk Rationale).
 3. **Interactive AI Chat Copilot**:
-   - Talk to the intake assistant to consult details or instruct it to update form fields dynamically (e.g. *“sorry, the batch number is BMX24602 and the affected quantity is 48 capsules”*).
-4. **AI Co-Pilot Risk Assessment (Section 5)**:
-   - **Initial Severity & Priority**: Evaluated using AI reasoning (Critical, Major, Minor).
-   - **Suggested Next Action**: e.g., *“Route to QA investigation and issue replacement”* or *“Route to QA investigation and initiate raw material audit”*.
-   - **Risk Assessment Details & Rationale**: Real-time justification of safety and GMP compliance risks based on FDA/EU regulations.
-5. **GMP Compliance Registry & Audit Trail**:
-   - Save logged complaints into the database registry.
-   - Access a detailed **Traceability Timeline** listing every field update, previous values, new values, timestamps, and whether the modification was done by a "User" or the "AI Copilot".
-6. **Additional QA Assessor Tools**:
-   - Completeness Check, Root Cause recommendations, CAPA generation, Duplicate Detection, and executive Summarization.
+   - Conversational assistant with instant form mutation (e.g., *"sorry, the batch number is BMX24602 and the affected quantity is 48 capsules"*).
+   - Quick action chips for common corrections.
+4. **AI Copilot Quality Assessor Tools (6 Built-in Tools)**:
+   - **Completeness Check**: Evaluates presence of mandatory GMP parameters.
+   - **Risk Classification**: Triages severity under EU Annex 15 and FDA guidance.
+   - **Root Cause Analysis**: Suggests 3 plausible technical root causes.
+   - **CAPA Suggestion**: Generates structured Correction, Corrective Action, and Preventive Action plans.
+   - **Duplicate Detection**: Flags matching batch records in the registry.
+   - **Executive Summarization**: Synthesizes a 2-3 sentence QA review summary.
+5. **QA Dashboard & GMP Registry**:
+   - Database registry of all logged complaints with search and workflow status transitions (`Pending Triage` &rarr; `Under Investigation` &rarr; `Resolved`).
+   - **21 CFR Part 11 Electronic Signature Stamp**: Cryptographic SHA-256 hash stamp for approved and closed complaints.
+   - **Traceability Audit Trail**: Chronological event timeline recording every field change, author (`User` or `AI Copilot`), old value strike-through, and new value.
+   - **Export GMP Report**: One-click download of a self-contained, printable HTML quality certificate.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React, Redux Toolkit (State Management), Lucide React (Icons), Vanilla CSS (Custom Glassmorphism Dark Theme, Inter font).
-- **Backend**: Python, FastAPI, SQLAlchemy, SQLite (default fallback) / PostgreSQL / MySQL support.
-- **AI Agent**: LangGraph (State Graphs for Extraction, Chat, and Assessments).
-- **LLM APIs**: Groq client calling `gemma2-9b-it` (for data extraction) and `llama-3.3-70b-versatile` (for conversational chat and assessments).
+- **UI & Application**: Python, Streamlit (Custom Glassmorphism Dark Theme)
+- **Database & ORM**: SQLAlchemy 2.0, SQLite (default) / PostgreSQL / MySQL
+- **AI Agent**: Groq client calling `gemma2-9b-it` (extraction) and `llama-3.3-70b-versatile` (chat & assessments)
+- **Fallback Mock Engine**: Built-in regex and heuristic engine for full offline / no-API-key functionality
+- **Document Parsers**: PyPDF, python-docx
 
 ---
 
-## 🚀 How to Run the Project
+## 🚀 How to Run
 
-### Prerequisite
-Make sure you have the following installed on your system:
-- **Node.js** (v18+)
-- **Python** (v3.10+)
-
-### 1. Environment Variable Setup (`.env`)
-Make sure a `.env` file exists at the root of the project containing your Groq API key:
-```env
-GROQ_API_KEY=gsk_your_actual_groq_api_key_here
-```
-*Note: The application has a smart fallback mock engine that mimics all agent reasoning, conversational chat, and extraction logic if the API key is not supplied, starts with an invalid prefix (such as `sk_`), or encounters runtime errors. The system will alert you but remain fully functional in fallback mode.*
-
----
-
-### 2. Quick Run (Windows)
-Double-click the **`run.bat`** file in the root folder, or run it in your shell:
-```powershell
-.\run.bat
-```
-This script will:
-1. Boot the FastAPI backend in a new command prompt window (`http://localhost:8000`).
-2. Boot the React dev server in a second command prompt window (`http://localhost:5173`).
-
----
-
-### 3. Manual Run (Platform-Independent)
-
-If you prefer starting the services manually, open two terminal windows:
-
-#### Terminal 1: Python FastAPI Backend
+### 1. Install Dependencies
 ```bash
-# Navigate to the backend directory
-cd backend
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Run the backend server
-python run.py
 ```
-*The API is now running at `http://localhost:8000` with Swagger docs available at `http://localhost:8000/docs`.*
 
-#### Terminal 2: React Frontend
-```bash
-# Navigate to the frontend directory
-cd frontend
-
-# Install package dependencies
-npm install
-
-# Run the Vite React client
-npm run dev
+### 2. Configure Environment (Optional)
+Copy `.env.example` to `.env` and add your Groq API key:
+```env
+GROQ_API_KEY=gsk_your_groq_api_key_here
 ```
-*The frontend web application is now active at `http://localhost:5173/`.*
+*(If no API key is provided, the system automatically runs in fallback mode with full scenario support!)*
+
+### 3. Launch the Application
+- **Windows**: Double-click `run.bat` or run:
+  ```powershell
+  .\run.bat
+  ```
+- **Platform-Independent**:
+  ```bash
+  python run.py
+  # OR
+  streamlit run app.py
+  ```
+The web application will open automatically in your browser at `http://localhost:8501`.
 
 ---
 
 ## 🔬 Sample Text for Testing / Demo
-Copy and paste the text below into the uploader area to see the AI agent in action:
 
-> **From**: reporter@saintjudepharmacy.com
-> **To**: qualityassurance@aivoa.ai
-> **Subject**: Defect Report - Paracetamol 500mg Batch P1234
+Copy and paste the text below into the uploader area or click **"Load Demo Sample"** inside the app:
+
+> **From**: reporter@saintjudepharmacy.com  
+> **To**: qualityassurance@aivoa.ai  
+> **Subject**: Defect Report - Paracetamol 500mg Batch P1234  
 > 
-> Dear Quality Team,
-> We are writing to report a major defect in the latest shipment of Paracetamol 500mg tablets that we received on July 25th, 2026. 
+> Dear Quality Team,  
+> We are writing to report a major defect in the latest shipment of Paracetamol 500mg tablets that we received on July 25th, 2026.  
 > 
-> Upon opening the box for Batch/Lot Number P1234 (Mfg: 2025-06-15, Exp: 2027-06-15), we noticed that approximately 15 kg of material (roughly 20 bottles) had compromised sealing foil on the primary blisters. Many tablets were crushed, and there is visible black discoloration/residue on the container seals, indicating potential manufacturing contamination. 
+> Upon opening the box for Batch/Lot Number P1234 (Mfg: 2025-06-15, Exp: 2027-06-15), we noticed that approximately 15 kg of material (roughly 20 bottles) had compromised sealing foil on the primary blisters. Many tablets were crushed, and there is visible black discoloration/residue on the container seals, indicating potential manufacturing contamination.  
 > 
-> One of our pharmacists noticed this prior to dispensing, so luckily no patients have taken this batch yet. Please log this complaint, initiate a CAPA, and let us know if we should return the defective stock.
+> One of our pharmacists noticed this prior to dispensing, so luckily no patients have taken this batch yet. Please log this complaint, initiate a CAPA, and let us know if we should return the defective stock.  
 > 
-> Best regards,
-> Dr. Alan Vance
-> Saint Jude Pharmacy Distribution
+> Best regards,  
+> Dr. Alan Vance  
+> Saint Jude Pharmacy Distribution  
